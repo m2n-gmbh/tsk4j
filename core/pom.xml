@@ -275,7 +275,7 @@
 		  </goals>
 		  <configuration>
 		    <workingDirectory>
-		      src/main/native/${os.name}/$arch}
+		      src/main/native/${os.name}/${arch}
 		    </workingDirectory>
 		    <executable>${make}</executable>
 		    <commandlineArgs>clean</commandlineArgs>
