@@ -89,7 +89,8 @@ public class BodyFileCodecTest extends junit.framework.TestCase {
 
 	public void testRoundTripLiteral() throws Exception {
 		String s1 = 
-			"7939d19f093143da0fde503ccf0c5a28|/bin/aconnect|1441814|r/rrwxr-xr-x|0|0|18984|1301530138|1301525515|1301525515|1301525515\n";
+			"7939d19f093143da0fde503ccf0c5a28|/bin/aconnect|1441814|r/rrwxr-xr-x|0|0|18984|1301530138|1301525515|1301525515|1301525515"
+			+System.lineSeparator();
 		System.out.println( s1 );
 
 		BodyFile bf = BodyFileCodec.parse( s1 );
