@@ -47,15 +47,15 @@ package edu.uw.apl.commons.tsk4j.base;
  * @see edu.uw.apl.commons.tsk4j.filesys.FileSystem
  */
 
-abstract public class Closeable {
+public abstract class Closeable implements AutoCloseable {
 
-	abstract protected void closeImpl();
+	protected abstract void closeImpl();
 	
 	protected Closeable() {
 		closed = false;
 	}
 
-	final public void close() {
+	public final void close() {
 		if( closed )
 			return;
 		closeImpl();
