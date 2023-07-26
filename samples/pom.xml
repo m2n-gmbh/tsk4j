@@ -10,7 +10,7 @@
   
   <artifactId>tsk4j-samples</artifactId>
   <name>TSK4J: Sample Programs</name>
-  <version>413.3.3</version>
+  <version>413.3.4</version>
   
   <dependencies>
     <dependency>
