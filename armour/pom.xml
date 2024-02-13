@@ -9,7 +9,7 @@
   </parent>
     
   <artifactId>tsk4j-armour</artifactId>
-  <version>413.3.7</version>
+  <version>413.3.8</version>
   <name>TSK4J: Armour Shell for BodyFile Manipulation/Visualization</name>
   
   <repositories>

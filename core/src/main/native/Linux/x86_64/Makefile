@@ -1,4 +1,4 @@
-CFLAGS += -m64
+CFLAGS += -m64 -fPIC
 LDFLAGS += -m64
 
 NATIVEHOME = $(abspath ../../)
