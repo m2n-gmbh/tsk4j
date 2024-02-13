@@ -30,11 +30,11 @@ LIBNAME ?= L
 
 BASEDIR = $(abspath $(NATIVEHOME)/../../..)
 
-CFLAGS += -Wall -Werror -fPIC -std=c99
+CFLAGS += -Wall -fPIC -std=c99 -Wl,-Bstatic
 
 CPPFLAGS += -I$(BASEDIR)/target/native/javah
 
-CPPFLAGS += $(TSK_CPPFLAGS)
+CPPFLAGS += $(TSK_CPPFLAGS) -fPIC -Wl,-Bstatic
 
 CPPFLAGS += -I$(JDK_HOME)/include -I$(JDK_HOME)/include/linux
 
