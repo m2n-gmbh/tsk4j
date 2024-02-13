@@ -40,8 +40,6 @@ CPPFLAGS += -I$(JDK_HOME)/include -I$(JDK_HOME)/include/linux
 
 LDLIBS += $(TSK_LDLIBS)
 
-LDLIBS += -lstdc++
-
 LDFLAGS += -shared
 
 MAINSRCS = $(shell cd $(NATIVEHOME) && ls *.c)
