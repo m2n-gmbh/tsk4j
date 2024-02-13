@@ -9,7 +9,7 @@
     </parent>
     
     <artifactId>tsk4j-digests</artifactId>
-    <version>413.3.5</version>
+    <version>413.3.6</version>
     <name>TSK4J: Digests for Volume/File Systems</name>
 
     <dependencies>
