@@ -186,63 +186,22 @@
       <profile>
 	<id>native</id>
 	<build>
+	  <pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.12.1</version>
+				<configuration>
+					<compilerArgs>
+						<arg>-h</arg>
+						<arg>${project.build.directory}/native/javah</arg>
+					</compilerArgs>
+				</configuration>
+			</plugin>
+		</plugins>
+	  </pluginManagement>
 	  <plugins>
-	    <plugin>
-	      <groupId>org.codehaus.mojo</groupId>
-	      <artifactId>native-maven-plugin</artifactId>
-	      <executions>
-		<execution>
-		  <id>javah</id>
-		  <phase>compile</phase>
-		  <configuration>
-		    <javahClassNames>
-		      <javahClassName>
-			edu.uw.apl.commons.tsk4j.base.HeapBuffer
-		      </javahClassName>
-		      <javahClassName>
-			edu.uw.apl.commons.tsk4j.base.Version
-		      </javahClassName>
-		      <javahClassName>
-			edu.uw.apl.commons.tsk4j.filesys.FileSystem
-		      </javahClassName>
-		      <javahClassName>
-			edu.uw.apl.commons.tsk4j.filesys.Block
-		      </javahClassName>
-		      <javahClassName>
-			edu.uw.apl.commons.tsk4j.filesys.Meta
-		      </javahClassName>
-		      <javahClassName>
-			edu.uw.apl.commons.tsk4j.filesys.Name
-		      </javahClassName>
-		      <javahClassName>
-			edu.uw.apl.commons.tsk4j.filesys.File
-		      </javahClassName>
-		      <javahClassName>
-			edu.uw.apl.commons.tsk4j.filesys.Directory
-		      </javahClassName>
-		      <javahClassName>
-			edu.uw.apl.commons.tsk4j.filesys.Attribute
-		      </javahClassName>
-		      <javahClassName>
-			edu.uw.apl.commons.tsk4j.filesys.Run
-		      </javahClassName>
-		      <javahClassName>
-			edu.uw.apl.commons.tsk4j.image.Image
-		      </javahClassName>
-		      <javahClassName>
-			edu.uw.apl.commons.tsk4j.volsys.VolumeSystem
-		      </javahClassName>
-		      <javahClassName>
-			edu.uw.apl.commons.tsk4j.volsys.Partition
-		      </javahClassName>
-		    </javahClassNames>
-		  </configuration>
-		  <goals>
-		    <goal>javah</goal>
-		  </goals>
-		</execution>
-	      </executions>
-	    </plugin>
 	    <plugin>
 	      <groupId>org.codehaus.mojo</groupId>
 	      <artifactId>exec-maven-plugin</artifactId>
@@ -263,7 +222,7 @@
 		    <environmentVariables>
 		      <ARCH>${arch}</ARCH>
 		      <!-- LOOK: Is this valid, using .. ? -->
-		      <JDK_HOME>${java.home}/..</JDK_HOME>
+		      <JDK_HOME>${java.home}</JDK_HOME>
 		      <PREFIX>edu.uw.apl.commons.tsk4j</PREFIX>
 		      <LIBNAME>tsk4j-core</LIBNAME>
 		    </environmentVariables>
@@ -285,7 +244,7 @@
 		    <environmentVariables>
 		      <ARCH>${arch}</ARCH>
 		      <!-- LOOK: Is this valid, using .. ? -->
-		      <JDK_HOME>${java.home}/..</JDK_HOME>
+		      <JDK_HOME>${java.home}</JDK_HOME>
 		      <PREFIX>edu.uw.apl.commons.tsk4j</PREFIX>
 		      <LIBNAME>tsk4j-core</LIBNAME>
 		    </environmentVariables>
