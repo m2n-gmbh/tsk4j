@@ -98,7 +98,7 @@ JNIEXPORT jint JNICALL Java_edu_uw_apl_commons_tsk4j_filesys_Meta_mtime
 (JNIEnv *env, jobject thiz, jlong nativePtr ) {
 
   TSK_FS_META* meta = (TSK_FS_META*)nativePtr;
-  return (jint)meta->ctime;
+  return (jint)meta->mtime;
 }
 
 
