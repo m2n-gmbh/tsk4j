@@ -40,6 +40,7 @@ import java.util.List;
 
 import edu.uw.apl.commons.tsk4j.base.Closeable;
 import edu.uw.apl.commons.tsk4j.image.Image;
+import edu.uw.apl.commons.tsk4j.pool.Pool;
 
 /**
  * @author Stuart Maclean
@@ -64,6 +65,22 @@ import edu.uw.apl.commons.tsk4j.image.Image;
  */
 
 public class VolumeSystem extends Closeable {
+
+	public static boolean isVolumeSystem(Image image) {
+		return isVolumeSystem(image, 0L);
+	}
+
+	public static boolean isVolumeSystem(Image image, long byteOffset) {
+		try {
+			try (final VolumeSystem vs = new VolumeSystem(image, byteOffset)) {
+				vs.getType();
+				return true;
+			}
+		} catch (Exception ignored) {
+			// ignored
+		}
+		return false;
+	}
 
 	public VolumeSystem( Image i ) {
 		this( i, 0L );

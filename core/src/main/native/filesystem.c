@@ -127,6 +127,20 @@ Java_edu_uw_apl_commons_tsk4j_filesys_FileSystem_openPartition
   return (jlong)fsInfo;
 }
 
+/*
+ * Class:     edu_uw_apl_commons_tsk4j_filesys_FileSystem
+ * Method:    openPool
+ * Signature: (JJ)J
+ */
+JNIEXPORT jlong JNICALL
+Java_edu_uw_apl_commons_tsk4j_filesys_FileSystem_openPool
+( JNIEnv *env, jobject thiz, jlong poolNativePtr, jlong offset ) {
+
+  TSK_POOL_INFO* poolInfo = (TSK_POOL_INFO*)poolNativePtr;
+  TSK_DADDR_T addr = (TSK_DADDR_T)offset;
+  TSK_FS_INFO* fsInfo = tsk_fs_open_pool( poolInfo, addr, TSK_FS_TYPE_DETECT );
+  return (jlong)fsInfo;
+}
 
 /*
  * Class:     edu_uw_apl_commons_tsk4j_filesys_FileSystem

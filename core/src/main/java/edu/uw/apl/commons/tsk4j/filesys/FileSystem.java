@@ -38,6 +38,7 @@ import java.io.IOException;
 import edu.uw.apl.commons.tsk4j.base.Closeable;
 import edu.uw.apl.commons.tsk4j.base.HeapBuffer;
 import edu.uw.apl.commons.tsk4j.image.Image;
+import edu.uw.apl.commons.tsk4j.pool.Pool;
 import edu.uw.apl.commons.tsk4j.volsys.Partition;
 import edu.uw.apl.commons.tsk4j.Native;
 
@@ -65,8 +66,9 @@ public class FileSystem extends Closeable {
 		this.ownsImage = ownsImage;
 		this.sectorOffset = sectorOffset;
 		this.partition = null;
-		heapBuffer = new HeapBuffer();
-		nativePtr = openImage( image.nativePtr(),
+		this.pool = null;
+		this.heapBuffer = new HeapBuffer();
+		this.nativePtr = openImage( image.nativePtr(),
 							   sectorOffset * image.sectorSize() );
 		if( nativePtr == 0 )
 			// mimic fls's error message...
@@ -90,13 +92,31 @@ public class FileSystem extends Closeable {
 		this( path, 0L );
 	}
 
-	public FileSystem( Partition p ) throws IOException {
-		image = null;
-		ownsImage = false;
-		sectorOffset = -1;
-		partition = p;
-		heapBuffer = new HeapBuffer();
-		nativePtr = openPartition( p.nativePtr() );
+	public FileSystem( Partition partition ) throws IOException {
+		this.image = null;
+		this.ownsImage = false;
+		this.sectorOffset = -1;
+		this.partition = partition;
+		this.pool = null;
+		this.heapBuffer = new HeapBuffer();
+		this.nativePtr = openPartition( partition.nativePtr() );
+		if( nativePtr == 0 )
+			// mimic fls's error message...
+			throw new IOException( "Cannot determine file system type" );
+	}
+
+	public FileSystem( Pool pool ) throws IOException {
+		this(pool, 0L);
+	}
+
+	public FileSystem( Pool pool, long offset ) throws IOException {
+		this.image = null;
+		this.ownsImage = false;
+		this.sectorOffset = -1;
+		this.partition = null;
+		this.pool = pool;
+		this.heapBuffer = new HeapBuffer();
+		this.nativePtr = openPool( pool.nativePtr(), offset);
 		if( nativePtr == 0 )
 			// mimic fls's error message...
 			throw new IOException( "Cannot determine file system type" );
@@ -112,7 +132,7 @@ public class FileSystem extends Closeable {
 	}
 
 	/**
-	 * @return Partition from which this FileSystem created, which can be null
+	 * @return Partition from which this FileSystem was created, which can be null
 	 * if created via an Image
 	 */
 	public Partition getPartition() {
@@ -128,7 +148,7 @@ public class FileSystem extends Closeable {
 	}
 
 	/**
-	 * @return image.getPath or null if filesystem constructed from a Partition
+	 * @return image.getPath or null if this FileSystem was constructed from a Partition
 	 */
 	public String getPath() {
 		// see note in Image.getPath
@@ -326,6 +346,7 @@ public class FileSystem extends Closeable {
 	
 	private native long openImage( long imgNativePtr, long offset );
 	private native long openPartition( long partitionNativePtr );
+	private native long openPool ( long poolNativePtr, long offset );
 	private native void close( long nativePtr );
 
 	private native long blockCount( long nativePtr );
@@ -366,6 +387,7 @@ public class FileSystem extends Closeable {
 	private final boolean ownsImage;
 	private final long sectorOffset;
 	private final Partition partition;
+	private final Pool pool;
 	private final long nativePtr;
 	final HeapBuffer heapBuffer;
 
