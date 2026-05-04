@@ -44,7 +44,7 @@ import java.util.List;
 public class ClosedTest extends junit.framework.TestCase {
 
 	public void testClosedAttribute() throws Exception {
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		if( ! new java.io.File( path ).exists() )
 			return;
 		FileSystem fs = new FileSystem( path );
@@ -73,7 +73,7 @@ public class ClosedTest extends junit.framework.TestCase {
 
 
 	public void testClosedRuns() throws Exception {
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		if( ! new java.io.File( path ).exists() )
 			return;
 		FileSystem fs = new FileSystem( path );
@@ -112,7 +112,7 @@ public class ClosedTest extends junit.framework.TestCase {
 	  work.
 	*/
 	public void testClosedAttributesWalk() throws Exception {
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );
 		final List<Attribute> as = new ArrayList<Attribute>();
 		DirectoryWalk.Callback cb = new DirectoryWalk.Callback() {

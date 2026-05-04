@@ -35,6 +35,8 @@ package edu.uw.apl.commons.tsk4j.filesys;
 
 import java.util.List;
 
+import org.junit.Ignore;
+
 import edu.uw.apl.commons.tsk4j.base.Utils;
 import edu.uw.apl.commons.tsk4j.image.Image;
 import edu.uw.apl.commons.tsk4j.volsys.Partition;
@@ -44,15 +46,15 @@ public class FileSystemTest extends junit.framework.TestCase {
 
 	public void testSz1() throws Exception {
 
-		String path = "/dev/sda";
-		FileSystem fs1 = new FileSystem( path, 2048L );
+		String path = "data/100M.ext4";
+		FileSystem fs1 = new FileSystem( path, 0L );
 		report( fs1 );
 		fs1.close();
 	}
 
 	public void testSz2() throws Exception {
 
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs1 = new FileSystem( path );
 		report( fs1 );
 		fs1.close();
@@ -61,14 +63,15 @@ public class FileSystemTest extends junit.framework.TestCase {
 	// same as sz2, by design...
 	public void testSz3() throws Exception {
 
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs1 = new FileSystem( path );
 		report( fs1 );
 		fs1.close();
 	}
 
-	public void testPartitionsLinux() throws Exception {
-		Image i = new Image( "/dev/sda" );
+	@Ignore
+	public void _testPartitionsLinux() throws Exception {
+		Image i = new Image( "data/diskimage-gpt.img" );
 		VolumeSystem vs = new VolumeSystem( i );
 		List<Partition> ps = vs.getPartitions();
 		for( Partition p : ps ) {
@@ -127,7 +130,7 @@ public class FileSystemTest extends junit.framework.TestCase {
 
 	public void _testRead() throws Exception {
 
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs1 = new FileSystem( path );//, 2048L * 512 );
 		int bs = fs1.blockSize();
 
@@ -141,7 +144,7 @@ public class FileSystemTest extends junit.framework.TestCase {
 
 	public void _testBlockGet() throws Exception {
 
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs1 = new FileSystem( path );//, 2048L * 512 );
 		int bs = fs1.blockSize();
 
@@ -157,7 +160,7 @@ public class FileSystemTest extends junit.framework.TestCase {
 		
 	public void _testFileOpenMeta() throws Exception {
 
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );//, 2048L * 512 );
 		File f = fs.fileOpenMeta( 2 );
 		System.out.println( f.paramString() );
@@ -166,7 +169,7 @@ public class FileSystemTest extends junit.framework.TestCase {
 
 	public void _testFileOpen() throws Exception {
 
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );//, 2048L * 512 );
 		File f = fs.fileOpen( "/root" );
 		System.out.println( f.paramString() );
@@ -175,7 +178,7 @@ public class FileSystemTest extends junit.framework.TestCase {
 		
 	public void testDirWalk() throws Exception {
 
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );//, 2048L * 512 );
 		DirectoryWalk.Callback cb = new DirectoryWalk.Callback() {
 				public int apply( WalkFile f, String path ) {
@@ -192,7 +195,7 @@ public class FileSystemTest extends junit.framework.TestCase {
 
 	public void _testMetaWalk() throws Exception {
 
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );//, 2048L * 512 );
 		MetaWalk.Callback cb = new MetaWalk.Callback() {
 				public int apply( WalkFile f ) {

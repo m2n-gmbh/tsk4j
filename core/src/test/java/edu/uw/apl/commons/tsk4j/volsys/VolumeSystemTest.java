@@ -43,7 +43,7 @@ import edu.uw.apl.commons.tsk4j.image.Image;
 public class VolumeSystemTest extends junit.framework.TestCase {
 
 	public void testSDA() throws Exception {
-		Image i = new Image( "/dev/sda" );
+		Image i = new Image( "data/diskimage-gpt.img" );
 		VolumeSystem vs = new VolumeSystem( i );
 		report( vs );
 		List<Partition> ps = vs.getPartitions();
@@ -56,7 +56,7 @@ public class VolumeSystemTest extends junit.framework.TestCase {
 
 	// construct a VS, then close it, and THEN attempt operations on it...
 	public void testSDAPostClosed() throws Exception {
-		Image i = new Image( "/dev/sda" );
+		Image i = new Image( "data/diskimage-gpt.img" );
 		VolumeSystem vs = new VolumeSystem( i );
 		vs.close();
 		try {
@@ -72,7 +72,7 @@ public class VolumeSystemTest extends junit.framework.TestCase {
 	  'all non-filesystem' areas of a disk have not changed.
 	*/
 	public void testPartitionInputStreams() throws Exception {
-		Image i = new Image( "/dev/sda" );
+		Image i = new Image( "data/diskimage-gpt.img" );
 		VolumeSystem vs = new VolumeSystem( i );
 		List<Partition> ps = vs.getPartitions();
 		for( Partition p : ps ) {
@@ -87,7 +87,7 @@ public class VolumeSystemTest extends junit.framework.TestCase {
 	}
 
 	public void testClosedPartition() throws Exception {
-		Image i = new Image( "/dev/sda" );
+		Image i = new Image( "data/diskimage-gpt.img" );
 		VolumeSystem vs = new VolumeSystem( i );
 		List<Partition> ps = vs.getPartitions();
 		Partition p = ps.get(0);

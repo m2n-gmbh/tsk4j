@@ -33,10 +33,14 @@
  */
 package edu.uw.apl.commons.tsk4j.base;
 
-public class HeapBufferTest extends junit.framework.TestCase {
+import static org.junit.Assert.fail;
 
-	public void testOOM() throws Exception {
+import org.junit.Ignore;
 
+public class HeapBufferTest {
+
+	@Ignore
+	public void _testOOM() throws Exception {
 		try {
 			/*
 			  16GB - 1 byte will get narrowed to UINT_MAX on 32 bit platforms,

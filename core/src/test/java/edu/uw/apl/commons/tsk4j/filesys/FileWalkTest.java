@@ -38,7 +38,7 @@ import java.util.List;
 public class FileWalkTest extends junit.framework.TestCase {
 
 	public void test1() throws Exception {
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );
 		File f = fs.fileOpen( "/home/stuart/.bashrc" );
 		if( f == null )
@@ -47,7 +47,7 @@ public class FileWalkTest extends junit.framework.TestCase {
 	}
 
 	public void test2() throws Exception {
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );
 		File f = fs.fileOpen( "/home/stuart/wineserver.log" );
 		if( f == null )

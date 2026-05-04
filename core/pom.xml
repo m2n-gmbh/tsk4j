@@ -4,11 +4,6 @@
 			     http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
-  <properties>
-    <!-- Override this by activating the 'tester' profile -->
-    <skipTests>true</skipTests>
-  </properties>
-  
   <!--
       We have native libraries (JNI/C) bundled into our artifact but,
       due to the composition of our Makefiles (see e.g.
@@ -132,13 +127,6 @@
 	understood by java-native-loader, would be needed in ANY project
 	that uses java-native-loader, so might go in settings.xml ??
     -->
-
-    <profile>
-      <id>tester</id>
-      <properties>
-	<skipTests>false</skipTests>
-      </properties>
-    </profile>
     <profile>
       <id>windows</id>
       <activation>
@@ -260,14 +248,6 @@
     <build>
       <defaultGoal>compile</defaultGoal>
       <plugins>
-
-	<plugin>
-	  <artifactId>maven-surefire-plugin</artifactId>
-	  <configuration>
-	    <skipTests>${skipTests}</skipTests>
-	  </configuration>
-	</plugin>
-
 	<plugin>
 	  <artifactId>maven-jar-plugin</artifactId>
 	  <configuration>

@@ -51,7 +51,7 @@ public class VolumeSystemHashCodecTest {
 
 	@Test
 	public void testSDA() throws IOException {
-		File f = new File( "/dev/sda" );
+		File f = new File( "data/diskimage-gpt.img" );
 		if( !f.canRead() )
 			return;
 		Image i = new Image( f );
@@ -65,7 +65,7 @@ public class VolumeSystemHashCodecTest {
 
 	@Test
 	public void testRoundTrip() throws IOException {
-		File f = new File( "/dev/sda" );
+		File f = new File( "data/diskimage-gpt.img" );
 		if( !f.canRead() )
 			return;
 		Image i = new Image( f );

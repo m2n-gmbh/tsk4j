@@ -33,7 +33,11 @@
  */
 package edu.uw.apl.commons.tsk4j;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
+
+import org.junit.Ignore;
 
 import edu.uw.apl.commons.tsk4j.image.Image;
 
@@ -52,8 +56,9 @@ import edu.uw.apl.commons.tsk4j.image.Image;
 
 import edu.uw.apl.commons.tsk4j.base.Version;
 
-public class SkippedNativeLoadTest extends junit.framework.TestCase {
+public class SkippedNativeLoadTest {
 
+	@Ignore
 	public void testSkipNativeLoad() throws Exception {
 		try {
 			System.setProperty

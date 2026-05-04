@@ -40,7 +40,7 @@ public class BlockTest extends junit.framework.TestCase {
 
 	public void testSDA1() throws Exception {
 
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs1 = new FileSystem( path );
 		test( fs1 );
 	}

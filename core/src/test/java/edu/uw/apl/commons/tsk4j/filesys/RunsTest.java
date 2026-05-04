@@ -41,8 +41,8 @@ import edu.uw.apl.commons.tsk4j.base.Utils;
 
 public class RunsTest extends junit.framework.TestCase {
 
-	public void _test1() throws Exception {
-		String path = "/dev/sda1";
+	public void test1() throws Exception {
+		String path = "data/100M.ext4";
 		if( ! new java.io.File( path ).exists() )
 			return;
 		FileSystem fs = new FileSystem( path );

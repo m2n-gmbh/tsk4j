@@ -43,7 +43,7 @@ public class BlockOrderTest extends junit.framework.TestCase {
 
 	public void _testCountAlloced() throws Exception {
 
-		String path = "/dev/sda1";
+		String path = "data/diskimage-gpt.img";
 		FileSystem fs = new FileSystem( path );
 
 		final List<File> files = new ArrayList<File>();

@@ -39,7 +39,7 @@ import edu.uw.apl.commons.tsk4j.image.Image;
 public class FileReadTest extends junit.framework.TestCase {
 
 	public void testGood1Block() throws Exception {
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );
 		System.err.println( "FS.nativePtr: " + fs.nativePtr() );
 		String fName = "/home/stuart/.bashrc";
@@ -52,7 +52,7 @@ public class FileReadTest extends junit.framework.TestCase {
 	}
 
 	public void testGoodNBlocks() throws Exception {
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );
 		System.err.println( "FS.nativePtr: " + fs.nativePtr() );
 		String fName = "/home/stuart/wineserver.log";
@@ -77,7 +77,7 @@ public class FileReadTest extends junit.framework.TestCase {
 	}
 	
 	public void testGood11() throws Exception {
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );
 		System.err.println( "FS.nativePtr: " + fs.nativePtr() );
 		String fName = "/home/stuart/.bashrc";
@@ -96,7 +96,7 @@ public class FileReadTest extends junit.framework.TestCase {
 	}
 
 	public void _testBad1() throws Exception {
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );
 		String fName = "/foobarbaz";
 		testBad( fs, fName );
@@ -110,7 +110,7 @@ public class FileReadTest extends junit.framework.TestCase {
 
 	// where the file content is smaller than the read buffer...
 	public void _testGood2() throws Exception {
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );
 		String fName = "/home/stuart/.bash_profile";
 		java.io.File f = new java.io.File( fName );

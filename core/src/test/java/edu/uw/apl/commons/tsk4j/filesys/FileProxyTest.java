@@ -46,14 +46,14 @@ public class FileProxyTest extends junit.framework.TestCase {
 
 	public void _testSz1() throws Exception {
 
-		String path = "/dev/sda";
+		String path = "data/100M.ext4";
 		FileSystem fs1 = new FileSystem( path, 2048 * 512L );
 		testProxies( fs1 );
 		fs1.close();
 	}
 
 	public void testSz2() throws Exception {
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs1 = new FileSystem( path );
 		report( fs1 );
 		testProxies( fs1 );

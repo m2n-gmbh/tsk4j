@@ -45,8 +45,7 @@ import edu.uw.apl.commons.tsk4j.base.Utils;
 public class ImageTest extends junit.framework.TestCase {
 
     static String disk1Name() {
-		return System.getProperty( "os.name" ).startsWith( "Mac" ) ?
-			"/dev/disk0" : "/dev/sda";
+		return "data/diskimage-gpt.img";
     }
 	
 	public void testTypeSupported() {

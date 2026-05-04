@@ -41,7 +41,7 @@ import edu.uw.apl.commons.tsk4j.image.Image;
 public class FileInputStreamTest extends junit.framework.TestCase {
 
 	public void testGood1Block() throws Exception {
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );
 		System.err.println( "FS.nativePtr: " + fs.nativePtr() );
 		String fName = "/home/stuart/.bashrc";
@@ -54,7 +54,7 @@ public class FileInputStreamTest extends junit.framework.TestCase {
 	}
 
 	public void testGoodNBlocks() throws Exception {
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );
 		System.err.println( "FS.nativePtr: " + fs.nativePtr() );
 		String fName = "/home/stuart/wineserver.log";

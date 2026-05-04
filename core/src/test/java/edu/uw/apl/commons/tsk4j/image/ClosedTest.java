@@ -36,7 +36,7 @@ package edu.uw.apl.commons.tsk4j.image;
 public class ClosedTest extends junit.framework.TestCase {
 
 	public void testClosed() throws Exception {
-		Image i = new Image( "/dev/sda" );
+		Image i = new Image( "data/diskimage-gpt.img" );
 
 		// Try to report on Image state while Image open, should work
 		try {

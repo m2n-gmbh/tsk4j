@@ -42,7 +42,7 @@ import edu.uw.apl.commons.tsk4j.base.Utils;
 public class MD5Test extends junit.framework.TestCase {
 
 	public void test1() throws Exception {
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );
 		walk( fs );
 		fs.close();

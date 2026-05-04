@@ -49,7 +49,7 @@ public class NativeTest extends junit.framework.TestCase {
 
 	// LOOK: Should this not be in Image testing??
 	public void testImage() throws Exception {
-		File f = new File( "/dev/sda" );
+		File f = new File( "data/diskimage-gpt.img" );
 		if( !f.exists() )
 			return;
 		System.out.println( "Image from " + f );

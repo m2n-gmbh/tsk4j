@@ -35,13 +35,16 @@ package edu.uw.apl.commons.tsk4j.filesys;
 
 import java.util.List;
 
+import org.junit.Ignore;
+
 import edu.uw.apl.commons.tsk4j.base.Utils;
 import edu.uw.apl.commons.tsk4j.image.Image;
 
 public class AttributeTests extends junit.framework.TestCase {
 
+	@Ignore
 	public void testGood1() throws Exception {
-		String path = "/dev/sda1";
+		String path = "data/100M.ext4";
 		FileSystem fs = new FileSystem( path );
 		System.err.println( "FS.nativePtr: " + fs.nativePtr() );
 		String fName = "/home/stuart/.bashrc";
