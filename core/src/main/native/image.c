@@ -51,7 +51,7 @@ JNIEXPORT jlong JNICALL Java_edu_uw_apl_commons_tsk4j_image_Image_openSingle
   
   const char* pathC = (*env)->GetStringUTFChars( env, path, NULL );
   unsigned a_ssize = 0;
-  TSK_IMG_INFO* info = tsk_img_open_utf8_sing( (const TSK_TCHAR*)pathC, 
+  TSK_IMG_INFO* info = tsk_img_open_utf8_sing( pathC,
 											   TSK_IMG_TYPE_DETECT, a_ssize );
   // even if info returned NULL, still OK to clean up the string...
   (*env)->ReleaseStringUTFChars( env, path, pathC );
