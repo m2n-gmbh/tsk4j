@@ -82,8 +82,12 @@ The Javadoc APIs should then be available at ./target/site/apidocs.
 
 To build native libs for Linux x86_64 with SleuthKit statically linked in,
 you need Docker installed. The build process will download and compile zlib,
-libewf (for E01 support) and Sleuthkit from sources and update TSK4J libs
-in your current TSK4K directory.
+libewf (for E01 support) and Sleuthkit inside the Docker environment. 
+When the Docker container has finished building, TSK4J libs in your current 
+TSK4J directory are up to date (the current TSK4J source directory is mounted 
+in the Docker container to make this happen).
+The Docker environment makes sure that native libraries are portable across 
+various systems with different versions of libc, stdc++, etc.
 
 ```
 $ cd /path/to/tsk4j
