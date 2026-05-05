@@ -68,23 +68,28 @@ and make/build system.  These native parts are already built for
 Linux.
 
 Build/Install
-------------
+-------------
+
+To build Java libraries and generate Javadocs:
 
 ```
 $ cd /path/to/tsk4j
-
 $ mvn install
-
 $ mvn javadoc:aggregate
 ```
 
 The Javadoc APIs should then be available at ./target/site/apidocs.
 
-There are unit tests for some modules.  These are only run when the
-'tester' profile is activated.  If you want to run unit tests, try:
+To build native libs for Linux x86_64 with SleuthKit statically linked in,
+you need Docker installed. The build process will download and compile zlib,
+libewf (for E01 support) and Sleuthkit from sources and update TSK4J libs
+in your current TSK4K directory.
 
 ```
-$ mvn test -Ptester
+$ cd /path/to/tsk4j
+$ ./build-linux-nativelibs-in-docker.sh
+$ # ... this will take a while ...
+$ mvn install
 ```
 
 Modules
@@ -110,11 +115,7 @@ only artifact you need.  To build:
 
 ```
 $ cd /path/to/tsk4j/core
-
 $ mvn install
-
-// Unit tests optional, need profile activation
-$ mvn test -Ptester
 ```
 
 The core module is mostly a thin Java wrapper for libtsk.  Perhaps the
@@ -149,7 +150,6 @@ artifact, which is a dependency of the sample module:
 
 ```
 $ cd /path/to/tsk4j/samples
-
 $ mvn package
 ```
 
@@ -230,9 +230,7 @@ is included:
 
 ```
 $ cd /path/to/tsk4j/armour
-
 $ mvn package
-
 $ ./armour -h
 ```
 
