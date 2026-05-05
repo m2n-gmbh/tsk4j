@@ -72,6 +72,29 @@ Java_edu_uw_apl_commons_tsk4j_pool_Pool_openPartition
 
 /*
  * Class:     edu_uw_apl_commons_tsk4j_pool_Pool
+ * Method:    countVolumes
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL
+Java_edu_uw_apl_commons_tsk4j_pool_Pool_countVolumes
+(JNIEnv * env, jobject thiz, jlong nativePtr ) {
+
+  TSK_POOL_INFO* poolInfo = (TSK_POOL_INFO*)nativePtr;
+
+  int result = 0;
+  /* Only APFS pools are currently supported */
+  if (poolInfo->ctype == TSK_POOL_TYPE_APFS) {
+    TSK_POOL_VOLUME_INFO *volInfo = poolInfo->vol_list;
+    while (volInfo != NULL) {
+      volInfo = volInfo->next;
+      result++;
+    }
+  }
+  return result;
+}
+
+/*
+ * Class:     edu_uw_apl_commons_tsk4j_pool_Pool
  * Method:    close
  * Signature: (J)V
  */

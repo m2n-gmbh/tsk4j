@@ -67,13 +67,13 @@ public class FileSystem extends Closeable {
 		this.sectorOffset = sectorOffset;
 		this.partition = null;
 		this.pool = null;
-		this.heapBuffer = new HeapBuffer();
 		this.nativePtr = openImage( image.nativePtr(),
 							   sectorOffset * image.sectorSize() );
 		if( nativePtr == 0 )
 			// mimic fls's error message...
 			throw new IllegalStateException
 				( "Cannot determine file system type" );
+		this.heapBuffer = new HeapBuffer();
 	}
 	
 	public FileSystem( Image image, long sectorOffset ) throws IOException {
@@ -98,24 +98,24 @@ public class FileSystem extends Closeable {
 		this.sectorOffset = -1;
 		this.partition = partition;
 		this.pool = null;
-		this.heapBuffer = new HeapBuffer();
 		this.nativePtr = openPartition( partition.nativePtr() );
 		if( nativePtr == 0 )
 			// mimic fls's error message...
 			throw new IOException( "Cannot determine file system type" );
+		this.heapBuffer = new HeapBuffer();
 	}
 
-	public FileSystem( Pool pool ) throws IOException {
+	public FileSystem( Pool pool, int volumeIndex ) throws IOException {
 		this.image = null;
 		this.ownsImage = false;
 		this.sectorOffset = -1;
 		this.partition = null;
 		this.pool = pool;
-		this.heapBuffer = new HeapBuffer();
-		this.nativePtr = openPool( pool.nativePtr() );
+		this.nativePtr = openPool( pool.nativePtr(), volumeIndex );
 		if( nativePtr == 0 )
 			// mimic fls's error message...
 			throw new IOException( "Cannot determine file system type" );
+		this.heapBuffer = new HeapBuffer();
 	}
 	
 	public Image getImage() {
@@ -342,7 +342,7 @@ public class FileSystem extends Closeable {
 	
 	private native long openImage( long imgNativePtr, long offset );
 	private native long openPartition( long partitionNativePtr );
-	private native long openPool ( long poolNativePtr );
+	private native long openPool ( long poolNativePtr, int volumeIndex );
 	private native void close( long nativePtr );
 
 	private native long blockCount( long nativePtr );

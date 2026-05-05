@@ -148,6 +148,11 @@ public class Pool extends Closeable {
 	public Partition getPartition() {
 		return partition;
 	}
+
+	public int countVolumes() {
+		checkClosed();
+		return countVolumes( nativePtr );
+	}
 	
 	@Override
 	protected void closeImpl() {
@@ -183,6 +188,7 @@ public class Pool extends Closeable {
 
 	private native long openImage( long imgNativePtr, long offset );
 	private native long openPartition( long partitionNativePtr );
+	private native int countVolumes( long nativePtr );
 	private native void close( long nativePtr );
 	private native int type( long nativePtr );
 
