@@ -106,17 +106,13 @@ public class FileSystem extends Closeable {
 	}
 
 	public FileSystem( Pool pool ) throws IOException {
-		this(pool, 0L);
-	}
-
-	public FileSystem( Pool pool, long offset ) throws IOException {
 		this.image = null;
 		this.ownsImage = false;
 		this.sectorOffset = -1;
 		this.partition = null;
 		this.pool = pool;
 		this.heapBuffer = new HeapBuffer();
-		this.nativePtr = openPool( pool.nativePtr(), offset);
+		this.nativePtr = openPool( pool.nativePtr() );
 		if( nativePtr == 0 )
 			// mimic fls's error message...
 			throw new IOException( "Cannot determine file system type" );
@@ -346,7 +342,7 @@ public class FileSystem extends Closeable {
 	
 	private native long openImage( long imgNativePtr, long offset );
 	private native long openPartition( long partitionNativePtr );
-	private native long openPool ( long poolNativePtr, long offset );
+	private native long openPool ( long poolNativePtr );
 	private native void close( long nativePtr );
 
 	private native long blockCount( long nativePtr );
