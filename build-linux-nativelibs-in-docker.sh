@@ -36,7 +36,7 @@ cd /usr/src
 wget https://github.com/sleuthkit/sleuthkit/releases/download/sleuthkit-4.15.0/sleuthkit-4.15.0.tar.gz
 tar -xvzf sleuthkit-4.15.0.tar.gz
 cd sleuthkit-4.15.0
-./configure --enable-static --with-libewf=/usr/local --with-libz=/usr/local --enable-pic
+./configure --enable-static --with-libewf=/usr/local --with-zlib=/usr/local
 make && make install
 
 ##############
