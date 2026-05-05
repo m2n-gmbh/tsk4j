@@ -1,7 +1,6 @@
 #!/bin/sh
 
 echo "
-#/bin/sh
 set -Eeuo pipefail
 
 microdnf install -y unzip gzip vim dnf && microdnf clean all
