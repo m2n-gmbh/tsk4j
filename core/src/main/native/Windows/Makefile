@@ -1,4 +1,7 @@
-# Building the TSK4J C sources on Windows using Cygwin/Mingw32
+# Building the TSK4J C sources for Windows on Linux
+# using Mingw64 cross compiler
+
+SHELL = /bin/bash
 
 ifndef ARCH
     $(error ARCH var missing.  Define in subdir Makefile, or pass here from basedir pom.xml)
