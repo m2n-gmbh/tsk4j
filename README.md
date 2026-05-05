@@ -62,11 +62,6 @@ Default locale: en_US, platform encoding: UTF-8
 OS name: "linux", version: "2.6.32-73-generic", arch: "i386", family: "unix"
 ```
 
-If you wish to take on the task of compiling the native C parts for
-either MacOS or Windows platforms, you will need a suitable C compiler
-and make/build system.  These native parts are already built for
-Linux.
-
 Build/Install
 -------------
 
@@ -92,6 +87,17 @@ various systems with different versions of libc, stdc++, etc.
 ```
 $ cd /path/to/tsk4j
 $ ./build-linux-nativelibs-in-docker.sh
+$ # ... this will take a while ...
+$ mvn install
+```
+
+The process for building Windows x86_64 native libs is almost the same,
+again using a Docker environment, but using MingW64 for cross-compilation
+internally. Example usage:
+
+```
+$ cd /path/to/tsk4j
+$ ./build-windows-nativelibs-in-docker.sh
 $ # ... this will take a while ...
 $ mvn install
 ```
