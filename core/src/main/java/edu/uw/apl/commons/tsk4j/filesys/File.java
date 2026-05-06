@@ -78,6 +78,9 @@ public class File extends Closeable {
 	 * called only by native code: filesystem.c
 	 */
 	File( long nativePtr, FileSystem fs, Meta meta, Name name ) {
+		if (nativePtr == 0) {
+			throw new IllegalArgumentException("nativePtr must not be null");
+		}
 		this.nativePtr = nativePtr;
 		this.fs = fs;
 		this.meta = meta;
@@ -86,7 +89,9 @@ public class File extends Closeable {
 
 	@Override
 	protected void closeImpl() {
-		close( nativePtr );
+		if (nativePtr != 0) {
+			close(nativePtr);
+		}
 	}
 
 	// A helper for Attribute, Run

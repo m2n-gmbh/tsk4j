@@ -121,7 +121,6 @@ public class Image extends Closeable {
 
 		// LOOK: why any particular path?
 		this.path = paths[0];
-
 		this.heapBuffer = new HeapBuffer();
 	}
 
@@ -136,8 +135,12 @@ public class Image extends Closeable {
 
 	@Override
 	protected void closeImpl() {
-		heapBuffer.free();
-		close( nativePtr );
+		if (heapBuffer != null) {
+			heapBuffer.free();
+		}
+		if (nativePtr != 0) {
+			close(nativePtr);
+		}
 	}
 
 	/**

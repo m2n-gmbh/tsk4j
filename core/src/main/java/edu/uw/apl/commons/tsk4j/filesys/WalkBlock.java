@@ -52,6 +52,9 @@ public class WalkBlock extends Block {
 	 */
 	WalkBlock( long nativePtr, FileSystem fs ) {
 		super( nativePtr, fs );
+		if (nativePtr == 0) {
+			throw new IllegalArgumentException("nativePtr must not be null");
+		}
 	}
 
 	/**
@@ -59,6 +62,7 @@ public class WalkBlock extends Block {
 	*/
 	@Override
 	protected void closeImpl() {
+		// Nothing to do
 	}
 }
 

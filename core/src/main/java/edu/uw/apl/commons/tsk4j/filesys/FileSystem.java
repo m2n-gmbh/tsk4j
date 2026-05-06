@@ -34,6 +34,7 @@
 package edu.uw.apl.commons.tsk4j.filesys;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import edu.uw.apl.commons.tsk4j.base.Closeable;
 import edu.uw.apl.commons.tsk4j.base.HeapBuffer;
@@ -62,13 +63,13 @@ public class FileSystem extends Closeable {
 	 */
 	public FileSystem( Image image, boolean ownsImage,
 					   long sectorOffset ) throws IOException {
-		this.image = image;
+		this.image = Objects.requireNonNull(image);
 		this.ownsImage = ownsImage;
 		this.sectorOffset = sectorOffset;
 		this.partition = null;
 		this.nativePtr = openImage( image.nativePtr(),
 							   sectorOffset * image.sectorSize() );
-		if( nativePtr == 0 )
+		if ( nativePtr == 0 )
 			// mimic fls's error message...
 			throw new IllegalStateException
 				( "Cannot determine file system type" );
@@ -97,7 +98,7 @@ public class FileSystem extends Closeable {
 		this.sectorOffset = -1;
 		this.partition = partition;
 		this.nativePtr = openPartition( partition.nativePtr() );
-		if( nativePtr == 0 )
+		if ( nativePtr == 0 )
 			// mimic fls's error message...
 			throw new IOException( "Cannot determine file system type" );
 		this.heapBuffer = new HeapBuffer();
@@ -117,15 +118,21 @@ public class FileSystem extends Closeable {
 	 * if created via an Image
 	 */
 	public Partition getPartition() {
+		checkClosed();
 		return partition;
 	}
 	
 	@Override
 	protected void closeImpl() {
-		heapBuffer.free();
-		close( nativePtr );
-		if( ownsImage )
+		if (heapBuffer != null) {
+			heapBuffer.free();
+		}
+		if (nativePtr != 0) {
+			close(nativePtr);
+		}
+		if( ownsImage ) {
 			image.close();
+		}
 	}
 
 	/**

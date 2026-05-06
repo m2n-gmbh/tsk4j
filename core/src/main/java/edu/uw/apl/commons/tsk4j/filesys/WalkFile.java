@@ -80,6 +80,9 @@ public class WalkFile extends File {
 	 */
 	WalkFile( long nativePtr, FileSystem fs, Meta meta, Name name ) {
 		super( nativePtr, fs, meta, name );
+		if (nativePtr == 0) {
+			throw new IllegalArgumentException("nativePtr must not be null");
+		}
 	}
 
 	/**
@@ -87,6 +90,7 @@ public class WalkFile extends File {
 	 */
 	@Override
 	protected void closeImpl() {
+		// Nothing to do
 	}
 
 	public Proxy nameProxy( String path ) {

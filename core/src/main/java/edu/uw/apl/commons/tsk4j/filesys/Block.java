@@ -58,12 +58,17 @@ public class Block extends Closeable {
 
 	// Called only by native code: filesystem.c (and BlockWalk$Block subclass)
 	Block( long nativePtr, FileSystem fs ) {
+		if (nativePtr == 0) {
+			throw new IllegalArgumentException("nativePtr must not be null");
+		}
 		this.nativePtr = nativePtr;
 		this.fs = fs;
 	}
 
 	protected void closeImpl() {
-		free( nativePtr );
+		if (nativePtr != 0) {
+			free(nativePtr);
+		}
 	}
 	
 	/**

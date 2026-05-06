@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import edu.uw.apl.commons.tsk4j.base.Closeable;
 import edu.uw.apl.commons.tsk4j.image.Image;
@@ -87,9 +88,9 @@ public class VolumeSystem extends Closeable {
 	}
 	
 	public VolumeSystem( Image i, long byteOffset ) {
-		image = i;
-		nativePtr = open( i.nativePtr(), byteOffset );
-		if( nativePtr == 0 )
+		this.image = Objects.requireNonNull(i);
+		this.nativePtr = open( i.nativePtr(), byteOffset );
+		if ( nativePtr == 0 )
 			// mimic mmls's error message...
 			throw new IllegalStateException
 				( i.getPath() + ": cannot determine partition type." );
@@ -97,7 +98,9 @@ public class VolumeSystem extends Closeable {
 
 	@Override
 	protected void closeImpl() {
-		close( nativePtr );
+		if (nativePtr != 0) {
+			close(nativePtr);
+		}
 	}
 
 	/**

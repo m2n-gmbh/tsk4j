@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import edu.uw.apl.commons.tsk4j.Native;
 import edu.uw.apl.commons.tsk4j.base.Closeable;
@@ -95,13 +96,13 @@ public class Pool extends Closeable {
 	 * @param ownsImage - if true, then call Image.close on Pool closure
 	 */
 	public Pool( Image image, boolean ownsImage, long sectorOffset ) throws IOException {
-		this.image = image;
+		this.image = Objects.requireNonNull(image);
 		this.ownsImage = ownsImage;
 		this.sectorOffset = sectorOffset;
 		this.partition = null;
 		this.nativePtr = openImage( image.nativePtr(),
 							   sectorOffset * image.sectorSize() );
-		if( nativePtr == 0 )
+		if ( nativePtr == 0 )
 			// mimic fls's error message...
 			throw new IllegalStateException
 				( "Cannot determine pool type" );
@@ -127,9 +128,9 @@ public class Pool extends Closeable {
 		this.image = null;
 		this.ownsImage = false;
 		this.sectorOffset = -1;
-		this.partition = p;
+		this.partition = Objects.requireNonNull(p);
 		this.nativePtr = openPartition( p.nativePtr() );
-		if( nativePtr == 0 )
+		if ( nativePtr == 0 )
 			// mimic fls's error message...
 			throw new IOException( "Cannot determine pool type" );
 	}
@@ -188,9 +189,12 @@ public class Pool extends Closeable {
 				}
 			}
 		}
-		close( nativePtr );
-		if( ownsImage )
+		if (nativePtr != 0) {
+			close(nativePtr);
+		}
+		if ( ownsImage ) {
 			image.close();
+		}
 	}
 
 	/**

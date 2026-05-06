@@ -49,6 +49,9 @@ public class Directory extends Closeable {
 
 	// called only by native code: filesystem.c
 	Directory( long nativePtr, FileSystem fs, File file ) {
+		if (nativePtr == 0) {
+			throw new IllegalArgumentException("nativePtr must not be null");
+		}
 		this.nativePtr = nativePtr;
 		this.fs = fs;
 		this.file = file;
@@ -56,7 +59,9 @@ public class Directory extends Closeable {
 
 	@Override
 	protected void closeImpl() {
-		close( nativePtr );
+		if (nativePtr != 0) {
+			close(nativePtr);
+		}
 	}
 
 	/**
