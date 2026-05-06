@@ -64,6 +64,7 @@ Java_edu_uw_apl_commons_tsk4j_volsys_VolumeSystem_open
 JNIEXPORT void JNICALL
 Java_edu_uw_apl_commons_tsk4j_volsys_VolumeSystem_close
 (JNIEnv *env, jobject thiz, jlong nativePtr ) {
+
   TSK_VS_INFO* info = (TSK_VS_INFO*)nativePtr;
   tsk_vs_close( info );
 }

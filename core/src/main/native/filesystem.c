@@ -375,7 +375,7 @@ static TSK_WALK_RET_ENUM blockWalkCallback( const TSK_FS_BLOCK* block,
 
   // exception in Java callback?
   if( (*env)->ExceptionCheck( env ) ) {
-	//	(*env)->DeleteLocalRef( env, blockWalkBlock );
+	(*env)->DeleteLocalRef( env, blockWalkBlock );
 	return TSK_WALK_ERROR;
   }
 
@@ -385,12 +385,13 @@ static TSK_WALK_RET_ENUM blockWalkCallback( const TSK_FS_BLOCK* block,
 	Use a BlockProxy to save a resurrectable handle to the Block
   */
   (*env)->CallVoidMethod( env, blockWalkBlock, BlockWalkBlockClose );
+
   if( (*env)->ExceptionCheck( env ) ) {
-	//	(*env)->DeleteLocalRef( env, blockWalkBlock );
+	(*env)->DeleteLocalRef( env, blockWalkBlock );
 	return TSK_WALK_ERROR;
   }
 
-  //  (*env)->DeleteLocalRef( env, blockWalkBlock );
+  (*env)->DeleteLocalRef( env, blockWalkBlock );
   return i;
 }
 
@@ -432,16 +433,19 @@ Java_edu_uw_apl_commons_tsk4j_filesys_FileSystem_fileOpenMeta
   if( !fsFile )
 	return (jobject)NULL;
 
-  jobject fileMeta = createFileMeta( env, fsFile->meta );
-  if( !fileMeta ) {
-	tsk_fs_file_close( fsFile );
-	return (jobject)NULL;
+  jobject fileMeta = NULL;
+  if( fsFile->meta ) {
+    fileMeta = createFileMeta( env, fsFile->meta );
+    if( !fileMeta ) {
+	  tsk_fs_file_close( fsFile );
+	  return (jobject)NULL;
+    }
   }
 
   jobject result = createFile( env, fsFile, thiz, fileMeta, NULL ); 
   if( !result ) {
+	if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
 	tsk_fs_file_close( fsFile );
-	// LOOK: free fileMeta ??
 	return (jobject)NULL;
   }
   return result;
@@ -457,6 +461,8 @@ Java_edu_uw_apl_commons_tsk4j_filesys_FileSystem_fileOpen
 (JNIEnv *env, jobject thiz, jlong nativePtr, jstring path ) {
   
   const char* pathC = (*env)->GetStringUTFChars( env, path, NULL );
+  if( pathC == NULL )
+    return (jobject)NULL;
 
   TSK_FS_INFO* info = (TSK_FS_INFO*)nativePtr;
   TSK_FS_FILE* fsFile = tsk_fs_file_open( info, NULL, pathC );
@@ -470,8 +476,8 @@ Java_edu_uw_apl_commons_tsk4j_filesys_FileSystem_fileOpen
   if( fsFile->meta ) {
 	fileMeta = createFileMeta( env, fsFile->meta );
 	if( !fileMeta ) {
-	  (*env)->ReleaseStringUTFChars( env, path, pathC );
 	  tsk_fs_file_close( fsFile );
+	  (*env)->ReleaseStringUTFChars( env, path, pathC );
 	  return (jobject)NULL;
 	}
   }
@@ -480,12 +486,22 @@ Java_edu_uw_apl_commons_tsk4j_filesys_FileSystem_fileOpen
   if( fsFile->name ) {
 	fileName = createFileName( env, fsFile->name );
 	if( !fileName ) {
-	  (*env)->ReleaseStringUTFChars( env, path, pathC );
+	  if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
 	  tsk_fs_file_close( fsFile );
+	  (*env)->ReleaseStringUTFChars( env, path, pathC );
 	  return (jobject)NULL;
 	}
   }
-  jobject result = createFile( env, fsFile, thiz, fileMeta, fileName ); 
+
+  jobject result = createFile( env, fsFile, thiz, fileMeta, fileName );
+  if( !result ) {
+    if (fileName) (*env)->DeleteLocalRef( env, fileName );
+  	if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
+  	tsk_fs_file_close( fsFile );
+  	(*env)->ReleaseStringUTFChars( env, path, pathC );
+  	return (jobject)NULL;
+  }
+
   (*env)->ReleaseStringUTFChars( env, path, pathC );
   return result;
 }
@@ -532,7 +548,12 @@ Java_edu_uw_apl_commons_tsk4j_filesys_FileSystem_dirOpenMeta
   TSK_FS_DIR* fsDir = tsk_fs_dir_open_meta( info, (TSK_INUM_T)metadataAddr );
   if( fsDir == NULL )
 	return (jobject)NULL;
+
   TSK_FS_FILE* fsFile = fsDir->fs_file;
+  if ( !fsFile ) {
+    tsk_fs_dir_close( fsDir );
+    return NULL;
+  }
 
   jobject fileMeta = NULL;
   if( fsFile->meta ) {
@@ -547,23 +568,26 @@ Java_edu_uw_apl_commons_tsk4j_filesys_FileSystem_dirOpenMeta
   if( fsFile->name ) {
 	fileName = createFileName( env, fsFile->name );
 	if( !fileName ) {
+	  if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
 	  tsk_fs_dir_close( fsDir );
-	  // LOOK: release fileMeta ????
 	  return NULL;
 	}
   }
 
   jobject file = createFile( env, fsFile, thiz, fileMeta, fileName ); 
   if( !file ) {
+      if (fileName) (*env)->DeleteLocalRef( env, fileName );
+      if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
 	  tsk_fs_dir_close( fsDir );
-	  // LOOK: release fileMeta, fileName ????
 	  return NULL;
   }
   
   jobject result = createDirectory( env, fsDir, thiz, file );
   if( !result ) {
+      (*env)->DeleteLocalRef( env, file );
+      if (fileName) (*env)->DeleteLocalRef( env, fileName );
+      if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
 	  tsk_fs_dir_close( fsDir );
-	  // LOOK: release fileMeta, fileName, file ????
 	  return NULL;
   }
   return result;
@@ -579,6 +603,8 @@ Java_edu_uw_apl_commons_tsk4j_filesys_FileSystem_dirOpen
 (JNIEnv *env, jobject thiz, jlong nativePtr, jstring path ) {
 
   const char* pathC = (*env)->GetStringUTFChars( env, path, NULL );
+  if( pathC == NULL )
+    return (jobject)NULL;
 
   TSK_FS_INFO* info = (TSK_FS_INFO*)nativePtr;
   TSK_FS_DIR* fsDir = tsk_fs_dir_open( info, pathC );
@@ -587,7 +613,13 @@ Java_edu_uw_apl_commons_tsk4j_filesys_FileSystem_dirOpen
 	(*env)->ReleaseStringUTFChars( env, path, pathC );
 	return (jobject)NULL;
   }
+
   TSK_FS_FILE* fsFile = fsDir->fs_file;
+  if ( !fsFile ) {
+    tsk_fs_dir_close( fsDir );
+    (*env)->ReleaseStringUTFChars( env, path, pathC );
+    return NULL;
+  }
 
   jobject fileMeta = NULL;
   if( fsFile->meta ) {
@@ -603,26 +635,29 @@ Java_edu_uw_apl_commons_tsk4j_filesys_FileSystem_dirOpen
   if( fsFile->name ) {
 	fileName = createFileName( env, fsFile->name );
 	if( !fileName ) {
+	  if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
 	  tsk_fs_dir_close( fsDir );
 	  (*env)->ReleaseStringUTFChars( env, path, pathC );
-	  // LOOK: release fileMeta ????
 	  return NULL;
 	}
   }
 
   jobject file = createFile( env, fsFile, thiz, fileMeta, fileName ); 
   if( !file ) {
+      if (fileName) (*env)->DeleteLocalRef( env, fileName );
+      if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
 	  tsk_fs_dir_close( fsDir );
 	  (*env)->ReleaseStringUTFChars( env, path, pathC );
-	  // LOOK: release fileMeta, fileName ????
 	  return NULL;
   }
   
   jobject result = createDirectory( env, fsDir, thiz, file );
   if( !result ) {
+      (*env)->DeleteLocalRef( env, file );
+      if (fileName) (*env)->DeleteLocalRef( env, fileName );
+      if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
 	  tsk_fs_dir_close( fsDir );
 	  (*env)->ReleaseStringUTFChars( env, path, pathC );
-	  // LOOK: release fileMeta, fileName, file ????
 	  return NULL;
   }
 
@@ -731,25 +766,40 @@ static TSK_WALK_RET_ENUM dirWalkCallback( TSK_FS_FILE* fsFile,
   if( fsFile->name ) {
 	fileName = createFileName( env, fsFile->name );
 	// exception pending, either in creation or in constructor?
-	if( fileName == NULL )
+	if( fileName == NULL ) {
+	  if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
 	  return TSK_WALK_ERROR;
+	}
   }
 
   jobject walkFile = createWalkFile( env, fsFile, fileSystem, 
 									 fileMeta, fileName );
   // exception pending, either in creation or in constructor?
-  if( walkFile == NULL )
+  if( walkFile == NULL ) {
+      if (fileName) (*env)->DeleteLocalRef( env, fileName );
+      if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
 	  return TSK_WALK_ERROR;
+  }
 
   jstring pathJ = (*env)->NewStringUTF( env, path );
   // exception pending, either in creation or in constructor?
-  if( pathJ == NULL )
+  if( pathJ == NULL ) {
+      (*env)->DeleteLocalRef( env, walkFile );
+      if (fileName) (*env)->DeleteLocalRef( env, fileName );
+      if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
 	  return TSK_WALK_ERROR;
+  }
 
   jint i = (*env)->CallIntMethod( env, callback, DirectoryWalkCallbackApply, 
 								  walkFile, pathJ );
+
+  (*env)->DeleteLocalRef( env, pathJ );
+
   // exception in Java callback?
   if( (*env)->ExceptionCheck( env ) ) {
+    (*env)->DeleteLocalRef( env, walkFile );
+    if (fileName) (*env)->DeleteLocalRef( env, fileName );
+    if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
 	//	printf( "Java Exception in callback, result %d\n", i );
 	return TSK_WALK_ERROR;
   }
@@ -769,6 +819,11 @@ static TSK_WALK_RET_ENUM dirWalkCallback( TSK_FS_FILE* fsFile,
 	Use a Proxy to save a resurrectable handle to the File
   */
   (*env)->CallVoidMethod( env, walkFile, WalkFileClose );
+
+  (*env)->DeleteLocalRef( env, walkFile );
+  if (fileName) (*env)->DeleteLocalRef( env, fileName );
+  if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
+
   if( (*env)->ExceptionCheck( env ) )
 	return TSK_WALK_ERROR;
 
@@ -803,17 +858,26 @@ static TSK_WALK_RET_ENUM metaWalkCallback( TSK_FS_FILE* fsFile, void* aPtr ) {
   jobject walkFile = createWalkFile( env, fsFile, fileSystem, 
 									 fileMeta, fileName ); 
   // exception pending, either in creation or in constructor?
-  if( walkFile == NULL )
+  if( walkFile == NULL ) {
+    if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
 	return TSK_WALK_ERROR;
+  }
 
   jint i = (*env)->CallIntMethod( env, callback, MetaWalkCallbackApply, 
 								  walkFile );
   // exception in Java callback?
-  if( (*env)->ExceptionCheck( env ) )
+  if( (*env)->ExceptionCheck( env ) ) {
+    (*env)->DeleteLocalRef( env, walkFile );
+    if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
 	return TSK_WALK_ERROR;
+  }
 
   // see above comment in the dirWalkCallback...
   (*env)->CallVoidMethod( env, walkFile, WalkFileClose );
+
+  (*env)->DeleteLocalRef( env, walkFile );
+  if (fileMeta) (*env)->DeleteLocalRef( env, fileMeta );
+
   if( (*env)->ExceptionCheck( env ) )
 	return TSK_WALK_ERROR;
 
@@ -867,6 +931,7 @@ static jint initBlockWalk( JNIEnv* env ) {
 	"(Ledu/uw/apl/commons/tsk4j/filesys/BlockWalk$Block;)I";
   BlockWalkCallbackApply = (*env)->GetMethodID( env, cls, "apply", 
 												BlockWalkCallbackApplySig );
+  (*env)->DeleteLocalRef( env, cls );
   if( BlockWalkCallbackApply == NULL )
 	return JNI_ERR;		// exception thrown...
   
@@ -1018,6 +1083,7 @@ static jint initDirectoryWalk( JNIEnv* env ) {
 	"(Ledu/uw/apl/commons/tsk4j/filesys/WalkFile;Ljava/lang/String;)I";
   DirectoryWalkCallbackApply = (*env)->GetMethodID( env, cls, "apply", 
 													DirWalkCallbackApplySig );
+  (*env)->DeleteLocalRef( env, cls );
   if( DirectoryWalkCallbackApply == NULL )
 	return JNI_ERR;		// exception thrown...
  
@@ -1035,6 +1101,7 @@ static jint initMetaWalk( JNIEnv* env ) {
 	"(Ledu/uw/apl/commons/tsk4j/filesys/WalkFile;)I";
   MetaWalkCallbackApply = (*env)->GetMethodID( env, cls, "apply", 
 											   MetaWalkCallbackApplySig );
+  (*env)->DeleteLocalRef( env, cls );
   if( MetaWalkCallbackApply == NULL )
 	return JNI_ERR;		// exception thrown...
   
