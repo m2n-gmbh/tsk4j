@@ -85,16 +85,16 @@ public class Image extends Closeable {
 			throw new IllegalArgumentException( "Null path" );
 		
 		// Fail early with IOException if file read issue, before jni...
-		File f = new File( path );
+		final File f = new File( path );
 		if( !f.canRead() )
 			throw new IOException( "Unreadable: " + path );
 		
-		nativePtr = openSingle( path );
+		this.nativePtr = openSingle( path );
 		if( nativePtr == 0 )
 			// mimic mmls's error message...
 			throw new IOException( "Image open: No such file or directory" );
 		this.path = path;
-		heapBuffer = new HeapBuffer();
+		this.heapBuffer = new HeapBuffer();
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class Image extends Closeable {
 				throw new IOException( "Unreadable: " + path );
 		}
 		
-		nativePtr = open( paths );
+		this.nativePtr = open( paths );
 		if( nativePtr == 0 )
 			// mimic mmls's error message...
 			throw new IOException
@@ -122,7 +122,16 @@ public class Image extends Closeable {
 		// LOOK: why any particular path?
 		this.path = paths[0];
 
-		heapBuffer = new HeapBuffer();
+		this.heapBuffer = new HeapBuffer();
+	}
+
+	public Image( long nativePtr ) {
+		if (nativePtr == 0) {
+			throw new IllegalArgumentException("nativePtr must not be null");
+		}
+		this.nativePtr = nativePtr;
+		this.path = null;
+		this.heapBuffer = new HeapBuffer();
 	}
 
 	@Override

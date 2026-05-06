@@ -55,6 +55,7 @@ public abstract class Closeable implements AutoCloseable {
 		closed = false;
 	}
 
+	@Override
 	public final void close() {
 		if( closed )
 			return;
@@ -66,13 +67,8 @@ public abstract class Closeable implements AutoCloseable {
 		if( closed )
 			throw new IllegalStateException( "Closed: " + getClass() );
 	}
-
-	@Override
-	protected void finalize() {
-		close();
-	}
 	
-	private boolean closed;
+	private volatile boolean closed;
 }
 
 // eof

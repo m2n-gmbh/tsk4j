@@ -129,39 +129,6 @@ Java_edu_uw_apl_commons_tsk4j_filesys_FileSystem_openPartition
 
 /*
  * Class:     edu_uw_apl_commons_tsk4j_filesys_FileSystem
- * Method:    openPool
- * Signature: (JI)J
- */
-JNIEXPORT jlong JNICALL
-Java_edu_uw_apl_commons_tsk4j_filesys_FileSystem_openPool
-( JNIEnv *env, jobject thiz, jlong poolNativePtr, jint volIndex ) {
-
-  TSK_POOL_INFO* poolInfo = (TSK_POOL_INFO*)poolNativePtr;
-
-  /* Only APFS pools are currently supported */
-  if (poolInfo->ctype == TSK_POOL_TYPE_APFS) {
-    TSK_POOL_VOLUME_INFO *volInfo = poolInfo->vol_list;
-    int curIndex = 0;
-    while (volInfo != NULL) {
-      if ( curIndex == volIndex ) {
-        TSK_IMG_INFO *poolImage = poolInfo->get_img_info(poolInfo, volInfo->block);
-        if (poolImage != NULL) {
-          TSK_FS_INFO* fsInfo = tsk_fs_open_img( poolImage, 0, TSK_FS_TYPE_APFS );
-          if (fsInfo != NULL) {
-            return (jlong)fsInfo;
-          }
-        }
-        tsk_img_close( poolImage );
-      }
-      volInfo = volInfo->next;
-      curIndex++;
-    }
-  }
-  return 0;
-}
-
-/*
- * Class:     edu_uw_apl_commons_tsk4j_filesys_FileSystem
  * Method:    close
  * Signature: (J)V
  */

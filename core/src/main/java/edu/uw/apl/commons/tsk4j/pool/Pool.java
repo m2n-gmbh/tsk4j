@@ -34,6 +34,9 @@
 package edu.uw.apl.commons.tsk4j.pool;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import edu.uw.apl.commons.tsk4j.Native;
 import edu.uw.apl.commons.tsk4j.base.Closeable;
@@ -91,8 +94,7 @@ public class Pool extends Closeable {
 	/**
 	 * @param ownsImage - if true, then call Image.close on Pool closure
 	 */
-	public Pool( Image image, boolean ownsImage,
-					   long sectorOffset ) throws IOException {
+	public Pool( Image image, boolean ownsImage, long sectorOffset ) throws IOException {
 		this.image = image;
 		this.ownsImage = ownsImage;
 		this.sectorOffset = sectorOffset;
@@ -131,7 +133,11 @@ public class Pool extends Closeable {
 			// mimic fls's error message...
 			throw new IOException( "Cannot determine pool type" );
 	}
-	
+
+	/**
+	 * @return Image from which this Pool was created, which can be null
+	 * if created via an Partition
+	 */
 	public Image getImage() {
 		checkClosed();
 		return image;
@@ -146,7 +152,26 @@ public class Pool extends Closeable {
 	 * if created via an Image
 	 */
 	public Partition getPartition() {
+		checkClosed();
 		return partition;
+	}
+
+	public List<Image> getVolumes() {
+		checkClosed();
+		if ( volumes == null ) {
+			volumes = new ArrayList<>();
+			final int numVolumes = countVolumes();
+			for (int i=0; i<numVolumes; i++) {
+				final long np = openVolume( nativePtr, i );
+				if (np != 0) {
+					final Image volume = new Image(np);
+					volumes.add(volume);
+				} else {
+					volumes.add(null); // Keep meaningful volume indices
+				}
+			}
+		}
+		return Collections.unmodifiableList(volumes);
 	}
 
 	public int countVolumes() {
@@ -156,6 +181,13 @@ public class Pool extends Closeable {
 	
 	@Override
 	protected void closeImpl() {
+		if ( volumes != null ) {
+			for ( Image volume : volumes) {
+				if ( volume != null ) {
+					volume.close();
+				}
+			}
+		}
 		close( nativePtr );
 		if( ownsImage )
 			image.close();
@@ -189,6 +221,7 @@ public class Pool extends Closeable {
 	private native long openImage( long imgNativePtr, long offset );
 	private native long openPartition( long partitionNativePtr );
 	private native int countVolumes( long nativePtr );
+	private native long openVolume( long nativePtr, int volumeIndex );
 	private native void close( long nativePtr );
 	private native int type( long nativePtr );
 
@@ -196,6 +229,7 @@ public class Pool extends Closeable {
 	private final boolean ownsImage;
 	private final long sectorOffset;
 	private final Partition partition;
+	private List<Image> volumes = null;
 	private final long nativePtr;
 
 }

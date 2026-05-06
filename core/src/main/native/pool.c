@@ -77,20 +77,41 @@ Java_edu_uw_apl_commons_tsk4j_pool_Pool_openPartition
  */
 JNIEXPORT jint JNICALL
 Java_edu_uw_apl_commons_tsk4j_pool_Pool_countVolumes
-(JNIEnv * env, jobject thiz, jlong nativePtr ) {
+( JNIEnv *env, jobject thiz, jlong nativePtr ) {
 
   TSK_POOL_INFO* poolInfo = (TSK_POOL_INFO*)nativePtr;
 
   int result = 0;
-  /* Only APFS pools are currently supported */
-  if (poolInfo->ctype == TSK_POOL_TYPE_APFS) {
-    TSK_POOL_VOLUME_INFO *volInfo = poolInfo->vol_list;
-    while (volInfo != NULL) {
-      volInfo = volInfo->next;
-      result++;
-    }
+  TSK_POOL_VOLUME_INFO *volInfo = poolInfo->vol_list;
+  while (volInfo != NULL) {
+    volInfo = volInfo->next;
+    result++;
   }
   return result;
+}
+
+/*
+ * Class:     edu_uw_apl_commons_tsk4j_pool_Pool
+ * Method:    openVolume
+ * Signature: (JI)J
+ */
+JNIEXPORT jlong JNICALL
+Java_edu_uw_apl_commons_tsk4j_pool_Pool_openVolume
+( JNIEnv *env, jobject thiz, jlong nativePtr, jint volumeIndex ) {
+
+  TSK_POOL_INFO* poolInfo = (TSK_POOL_INFO*)nativePtr;
+
+  TSK_POOL_VOLUME_INFO *volInfo = poolInfo->vol_list;
+  int curIndex = 0;
+  while (volInfo != NULL) {
+    if ( curIndex == volumeIndex ) {
+      TSK_IMG_INFO *poolImage = poolInfo->get_img_info(poolInfo, volInfo->block);
+      return (jlong)poolImage;
+    }
+    volInfo = volInfo->next;
+    curIndex++;
+  }
+  return 0;
 }
 
 /*
