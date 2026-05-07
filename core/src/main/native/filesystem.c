@@ -741,10 +741,18 @@ static TSK_WALK_RET_ENUM dirWalkCallback( TSK_FS_FILE* fsFile,
   jobject fileSystem = (jobject)vs[1];
   jobject callback = (jobject)vs[2];
 
-#ifdef DEBUGTSK
-  fprintf( stderr, "DirCallback: fs %p path %s meta %p name %p (%s)\n", 
-		   fsFile, path, fsFile->meta, fsFile->name, fsFile->name->name );
-#endif
+  #ifdef DEBUGTSK
+    fprintf( stderr, "DirCallback: fs %p path %s meta %p name %p (%s)\n",
+             fsFile, path, fsFile->meta, fsFile->name, (fsFile->name) ? fsFile->name->name : "null" );
+  #endif
+
+  if ( !fsFile ) {
+    return TSK_WALK_ERROR;
+  }
+
+  if ( !path ) {
+    return TSK_WALK_ERROR;
+  }
 
   jobject fileMeta = NULL;
   /*

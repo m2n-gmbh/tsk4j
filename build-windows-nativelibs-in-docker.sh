@@ -33,7 +33,7 @@ EOF
 rpm --import https://www.centos.org/keys/RPM-GPG-KEY-CentOS-Official
 dnf clean all
 dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
-dnf install -y mingw64-gcc mingw64-gcc-c++ git autoconf gettext libtool wget maven
+dnf install -y mingw64-gcc mingw64-gcc-c++ git autoconf gettext libtool wget maven patch
 
 export CHOST=\"x86_64-w64-mingw32\"
 export CFLAGS=\"-D_GNU_SOURCE -D_FILE_OFFSET_BITS=64\"
@@ -67,6 +67,18 @@ cd /usr/src
 wget https://github.com/sleuthkit/sleuthkit/releases/download/sleuthkit-4.15.0/sleuthkit-4.15.0.tar.gz
 tar -xvzf sleuthkit-4.15.0.tar.gz
 cd sleuthkit-4.15.0
+echo \"
+--- tsk/fs/apfs_compat.cpp~     2026-05-07 17:12:01.000000000 +0200
++++ tsk/fs/apfs_compat.cpp      2026-05-07 17:12:18.208476562 +0200
+@@ -648,7 +648,7 @@
+
+   fs_file->meta->reset_content = [](void* content_ptr) {
+     // Destruct the APFSJObject
+-    static_cast<APFSJObject*>(content_ptr)->~APFSJObject();
++    //static_cast<APFSJObject*>(content_ptr)->~APFSJObject();
+   };
+
+   auto inode_ptr = static_cast<APFSJObject*>(fs_file->meta->content_ptr);\" | patch -p0
 ./configure --host=x86_64-w64-mingw32 --prefix=/usr/x86_64-w64-mingw32 --with-pic --enable-static --disable-shared --with-pic \
     --disable-java --with-libewf=/usr/x86_64-w64-mingw32 --with-zlib=/usr/x86_64-w64-mingw32 \
     CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++
